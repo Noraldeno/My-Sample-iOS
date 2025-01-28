@@ -1,0 +1,33 @@
+---
+name: MegaLinter
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+permissions: {}
+jobs:
+  swiftlint-docker:
+    name: swiftlint-docker
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Swiftlint
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/tmp/lint:rw -w /tmp/lint ghcr.io/realm/swiftlint:latest swiftlint lint --strict
+  megalinter:
+    name: MegaLinter
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: MegaLinter
+        uses: oxsecurity/megalinter@v8
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          ENABLE_LINTERS: SWIFT_SWIFTLINT
